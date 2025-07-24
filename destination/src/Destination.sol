@@ -41,7 +41,7 @@ contract Destination is AccessControl {
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
 
-		require(_wrapped_token == address(this), "Must own token to unwrap it");
+		require(underlying_tokens[_wrapped_token] == address(this), "Must own token to unwrap it");
 
 		address _underlying_token = underlying_tokens[_wrapped_token];
 
