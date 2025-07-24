@@ -26,18 +26,11 @@ contract Destination is AccessControl {
 	function wrap(address _underlying_token, address _recipient, uint256 _amount ) public onlyRole(WARDEN_ROLE) {
 		//YOUR CODE HERE
 
-		Vm.expectEmit(true, true, true, false, address(this));
+		require(wrapped_tokens[_underlying_token] != address(0), "Must use registered token");
 
 		address _wrapped_token = wrapped_tokens[_underlying_token];
 
-		BridgeToken token;
-
-		for (uint i = 0; i < tokens.length; i++) {
-			if (tokens[i].underlying == _underlying_token){
-				token = tokens[i];
-				break;
-			}
-		}
+		BridgeToken token = BridgeToken(_wrapped_token);
 
 		token.mint(_recipient, _amount);
 
@@ -48,20 +41,13 @@ contract Destination is AccessControl {
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
 
-		Vm.expectEmit(true, true, true, false, address(this));
+		require(underlying_tokens[_wrapped_token] == _recipient, "Must own token to unwrap it");
 
 		address _underlying_token = underlying_tokens[_wrapped_token];
 
-		BridgeToken token;
+		BridgeToken token = BridgeToken(_wrapped_token);
 
-		for (uint i = 0; i < tokens.length; i++) {
-			if (tokens[i].underlying == _underlying_token){
-				token = tokens[i];
-				break;
-			}
-		}
-
-		token.burnFrom(_wrapped_token, _amount);
+		token.burnFrom(_recipient, _amount);
 
 		emit Unwrap(_underlying_token , _wrapped_token, token.address(), _recipient, _amount );
 	}
@@ -70,8 +56,6 @@ contract Destination is AccessControl {
 		//YOUR CODE HERE
 
 		BridgeToken token = new BridgeToken(_underlying_token, name, symbol, address(this));
-
-		tokens.push(token);
 
 		address _wrapped_token = address(token);
 
