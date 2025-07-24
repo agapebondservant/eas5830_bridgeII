@@ -26,6 +26,8 @@ contract Destination is AccessControl {
 	function wrap(address _underlying_token, address _recipient, uint256 _amount ) public onlyRole(WARDEN_ROLE) {
 		//YOUR CODE HERE
 
+		require(hasRole(address(this), WARDEN_ROLE), "Caller is not authorized for this role");
+
 		Vm.expectEmit(false, false, false, false, address(this));
 
 		address _wrapped_token = wrapped_tokens[_underlying_token];
@@ -68,6 +70,7 @@ contract Destination is AccessControl {
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
 		//YOUR CODE HERE
+		require(hasRole(address(this), CREATOR_ROLE), "Caller is not authorized for this role");
 
 		BridgeToken token = new BridgeToken(_underlying_token, name, symbol, address(this));
 
