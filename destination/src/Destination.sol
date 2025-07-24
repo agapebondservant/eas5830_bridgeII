@@ -28,7 +28,7 @@ contract Destination is AccessControl {
 
 		expectEmit(false, false, false, false, address(this));
 
-		_wrapped_token = wrapped_tokens[_underlying_token];
+		address _wrapped_token = wrapped_tokens[_underlying_token];
 
 		BridgeToken token;
 
@@ -50,13 +50,13 @@ contract Destination is AccessControl {
 
 		expectEmit(false, false, false, false, address(this));
 
-		_underlying_token = underlying_tokens[_wrapped_token];
+		address _underlying_token = underlying_tokens[_wrapped_token];
 
 		BridgeToken token;
 
-		for (uint i = 0; i < users.length; i++) {
-			if (users[i].underlying_token() == _underlying_token){
-				token = users[i];
+		for (uint i = 0; i < tokens.length; i++) {
+			if (tokens[i].underlying_token() == _underlying_token){
+				token = tokens[i];
 				break;
 			}
 		}
@@ -73,7 +73,7 @@ contract Destination is AccessControl {
 
 		tokens.push(token);
 
-		_wrapped_token = address(token);
+		address _wrapped_token = address(token);
 
 		underlying_tokens[_wrapped_token] = _underlying_token;
 
