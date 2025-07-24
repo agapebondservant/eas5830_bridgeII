@@ -32,9 +32,9 @@ contract Destination is AccessControl {
 
 		BridgeToken token;
 
-		for (uint i = 0; i < users.length; i++) {
-			if (users[i].underlying_token() == _underlying_token){
-				token = users[i];
+		for (uint i = 0; i < tokens.length; i++) {
+			if (tokens[i].underlying_token() == _underlying_token){
+				token = tokens[i];
 				break;
 			}
 		}
