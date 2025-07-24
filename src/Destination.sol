@@ -28,12 +28,13 @@ contract Destination is AccessControl {
 
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
-		
+
 	}
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
 		//YOUR CODE HERE
 		BridgeToken token = new BridgeToken(_underlying_token, name, symbol, this.getRoleMember('CREATOR_ROLE',0));
+		emit Creation(_underlying_token, address(token));
 		return address(token);
 	}
 
