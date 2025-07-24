@@ -32,6 +32,8 @@ contract Destination is AccessControl {
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
 		//YOUR CODE HERE
+		BridgeToken token = new BridgeToken(_underlying_token, name, symbol, this.getRoleMember('CREATOR_ROLE',0));
+		return token.underlying();
 	}
 
 }
