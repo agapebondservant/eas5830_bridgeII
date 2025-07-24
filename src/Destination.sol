@@ -4,6 +4,7 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./BridgeToken.sol";
+import "forge-std/Test.sol";
 
 contract Destination is AccessControl {
     bytes32 public constant WARDEN_ROLE = keccak256("BRIDGE_WARDEN_ROLE");
@@ -24,11 +25,19 @@ contract Destination is AccessControl {
 
 	function wrap(address _underlying_token, address _recipient, uint256 _amount ) public onlyRole(WARDEN_ROLE) {
 		//YOUR CODE HERE
+		vm.expectEmit(true, true, false, false, _underlying_token);
+		BridgeToken token;
+		token.mint(_recipient, _amount);
+		emit Wrap( _underlying_token, wrapped_token, _recipient, _amount );
+		
 	}
 
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
-
+		vm.expectEmit(true, true, true, false);
+		BridgeToken token;
+		token.burnFrom(_wrapped_token, _amount)
+		emit Unwrap( , wrapped_token, , _recipient, uint256 amount );
 	}
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
