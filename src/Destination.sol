@@ -25,26 +25,63 @@ contract Destination is AccessControl {
 
 	function wrap(address _underlying_token, address _recipient, uint256 _amount ) public onlyRole(WARDEN_ROLE) {
 		//YOUR CODE HERE
-		vm.expectEmit(true, true, false, false, _underlying_token);
+
+		vm.expectEmit(false, false, false, false, address(this));
+
+		_wrapped_token = wrapped_tokens[_underlying_token];
+
 		BridgeToken token;
+
+		for (uint i = 0; i < users.length; i++) {
+			if (users[i].underlying_token() == _underlying_token){
+				token = users[i];
+				break;
+			}
+		}
+
 		token.mint(_recipient, _amount);
-		emit Wrap( _underlying_token, wrapped_token, _recipient, _amount );
+
+		emit Wrap( _underlying_token, _wrapped_token, _recipient, _amount );
 		
 	}
 
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
-		vm.expectEmit(true, true, true, false);
+
+		vm.expectEmit(false, false, false, false, address(this));
+
+		_underlying_token = underlying_tokens[_wrapped_token];
+
 		BridgeToken token;
-		token.burnFrom(_wrapped_token, _amount)
-		emit Unwrap( , wrapped_token, , _recipient, uint256 amount );
+
+		for (uint i = 0; i < users.length; i++) {
+			if (users[i].underlying_token() == _underlying_token){
+				token = users[i];
+				break;
+			}
+		}
+
+		token.burnFrom(_wrapped_token, _amount);
+
+		emit Unwrap(_underlying_token , _wrapped_token, token.address(), _recipient, _amount );
 	}
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
 		//YOUR CODE HERE
-		BridgeToken token = new BridgeToken(_underlying_token, name, symbol, this.getRoleMember('CREATOR_ROLE',0));
-		emit Creation(_underlying_token, address(token));
-		return address(token);
+
+		BridgeToken token = new BridgeToken(_underlying_token, name, symbol, address(this));
+
+		tokens.push(token);
+
+		_wrapped_token = address(token);
+
+		underlying_tokens[_wrapped_token] = _underlying_token;
+
+		wrapped_tokens[_underlying_token] = _wrapped_token;
+
+		emit Creation(_underlying_token, _wrapped_token);
+
+		return _wrapped_token;
 	}
 
 }
