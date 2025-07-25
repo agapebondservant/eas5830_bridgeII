@@ -41,17 +41,15 @@ contract Destination is AccessControl {
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
 
-		address sender = tokens[tokens.length - 1];
-
-		require(underlying_tokens[_wrapped_token] == sender, "Must own token to unwrap it");
+		require(underlying_tokens[_wrapped_token] == msg.sender, "Must own token to unwrap it");
 
 		address _underlying_token = underlying_tokens[_wrapped_token];
 
 		BridgeToken token = BridgeToken(_wrapped_token);
 
-		token.burnFrom(sender, _amount);
+		token.burnFrom(msg.sender, _amount);
 
-		emit Unwrap(_underlying_token , _wrapped_token, sender, _recipient, _amount );
+		emit Unwrap(_underlying_token , _wrapped_token, msg.sender, _recipient, _amount );
 	}
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
@@ -64,8 +62,6 @@ contract Destination is AccessControl {
 		underlying_tokens[_wrapped_token] = _underlying_token;
 
 		wrapped_tokens[_underlying_token] = _wrapped_token;
-
-		tokens.push(address(this));
 
 		emit Creation(_underlying_token, _wrapped_token);
 
