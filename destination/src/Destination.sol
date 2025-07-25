@@ -41,13 +41,13 @@ contract Destination is AccessControl {
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
 		//YOUR CODE HERE
 
-		require(underlying_tokens[_wrapped_token] == msg.sender, "Must own token to unwrap it");
+		require(BridgeToken(underlying_tokens[_wrapped_token])._msgSender() == msg.sender, "Must own token to unwrap it");
 
 		address _underlying_token = underlying_tokens[_wrapped_token];
 
 		BridgeToken token = BridgeToken(_wrapped_token);
 
-		token.burnFrom(msg.senders, _amount);
+		token.burnFrom(msg.sender, _amount);
 
 		emit Unwrap(_underlying_token , _wrapped_token, msg.sender, _recipient, _amount );
 	}
